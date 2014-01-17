@@ -42,7 +42,7 @@ class Sitemap
     page_hash = { assets: { imgs: [],
                             scripts: [],
                             stylesheets: [] },
-                  links: {}
+                  links: []
                  }
     html_doc = Nokogiri::HTML( current_contents )
     # get all scripts, stylesheets and images
@@ -67,13 +67,20 @@ class Sitemap
     # get all internal links on the page
     links = html_doc.css('a').map { |l| link = l.attributes['href']; link.value if link && (link.value !~ %r{^http(s)?:.*})  }.compact
     links.each do |href|
-      link = Link.new( href, :new )
-      page_hash[:links][href] = link unless page_hash[:links].keys.include?( link )
+      page_hash[:links] << href unless page_hash[:links].include?( href )
+      if uri != href
+        child_uri = URI.join(uri, href).to_s
+        site_hash[:links][ child_uri ] ||= Link.new(child_uri, :new)
+      end
     end
-    site_hash[:links].merge!( page_hash[:links] )
+    site_hash[:links][ uri ] ||= Link.new(uri, :new)
+    site_hash[:links][ uri ].status = :processed
 
-    site_hash[:pages] << Page.new(uri, :success, page_hash)
-    # TODO: process links
+    site_hash[:links].dup.each do |key, link_obj|
+      if link_obj.status.eql?( :new )
+        traverse_site( link_obj.href )
+      end
+    end
     true
   end
 end
