@@ -14,7 +14,7 @@ describe Sitemap do
     end
   end
   describe "#render_sitemap" do
-    let(:sitemap) { subject.render_sitemap }
+    let(:sitemap) { subject.render_sitemap.inspect }
     it "should output the site hash" do
       expect( sitemap ).to match(/pages/)
       expect( sitemap ).to match(/assets/)

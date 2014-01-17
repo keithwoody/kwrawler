@@ -11,8 +11,10 @@ describe Kwrawler do
     it "should exit gracefully if the uri is invalid" do
       expect( Kwrawler.crawl( 'nonono' ) ).to match(/nvalid URI/)
     end
-    it "should return a Sitemap created from a valid URI" do
-      expect( Kwrawler.crawl( 'http://google.com' ) ).to be_a( Sitemap )
+    it "should return a Sitemap as a hash" do
+      sitemap = Kwrawler.crawl( 'http://google.com' )
+      expect( sitemap ).to be_a( Hash )
+      expect( sitemap.inspect ).to match(/Sitemap/)
     end
   end
 

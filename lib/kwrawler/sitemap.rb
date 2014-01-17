@@ -26,7 +26,7 @@ class Sitemap
   end
 
   def render_sitemap
-    site_hash.inspect
+    site_hash
   end
 
   def retrieve( uri )
