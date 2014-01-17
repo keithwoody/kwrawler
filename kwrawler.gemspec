@@ -22,6 +22,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rake"
   spec.add_development_dependency "rspec-rails"
   spec.add_development_dependency "guard-rspec"
+  spec.add_development_dependency "byebug"
 
   spec.add_runtime_dependency "nokogiri"
 end
