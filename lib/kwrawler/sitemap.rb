@@ -6,7 +6,7 @@ class Sitemap
 
   attr_accessor :site_hash, :current_contents
 
-  class Page < Struct.new(:uri, :links, :properties); end
+  class Page < Struct.new(:uri, :properties); end
   #status can be :new, :processed, :unreachable
   class Link < Struct.new(:href, :status); end
 
