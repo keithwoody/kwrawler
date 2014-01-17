@@ -65,7 +65,7 @@ class Sitemap
     site_hash[:assets][:imgs] |= page_hash[:assets][:imgs]
 
     # get all internal links on the page
-    links = html_doc.css('a').map { |l| link = l.attributes['href']; link.value if link && (link.value !~ %r{^http:.*})  }.compact
+    links = html_doc.css('a').map { |l| link = l.attributes['href']; link.value if link && (link.value !~ %r{^http(s)?:.*})  }.compact
     links.each do |href|
       link = Link.new( href, :new )
       page_hash[:links][href] = link unless page_hash[:links].keys.include?( link )
