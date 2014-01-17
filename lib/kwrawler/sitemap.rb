@@ -4,7 +4,7 @@ require 'nokogiri'
 class Sitemap
   URI_FAILURE = "failed to read uri"
 
-  attr_accessor :site_hash
+  attr_accessor :site_hash, :current_contents
 
   class Page < Struct.new(:uri, :links, :properties); end
   #status can be :new, :processed, :unreachable
@@ -20,9 +20,7 @@ class Sitemap
   end
 
   def from_uri( uri )
-    contents = retrieve( uri )
-    unless contents.eql?( URI_FAILURE )
-      traverse_site( uri, contents )
+    if traverse_site( uri )
       render_sitemap
     end
   end
@@ -32,22 +30,21 @@ class Sitemap
   end
 
   def retrieve( uri )
-    contents = ""
     begin
-      contents = open( uri ).read
+      self.current_contents = open( uri ).read
     rescue #errors 404, 500, etc.
       return URI_FAILURE
     end
-    contents
   end
 
-  def traverse_site( uri, html )
+  def traverse_site( uri )
+    return false if retrieve( uri ).eql?( URI_FAILURE )
     page_hash = { assets: { imgs: [],
                             scripts: [],
                             stylesheets: [] },
                   links: {}
                  }
-    html_doc = Nokogiri::HTML( html )
+    html_doc = Nokogiri::HTML( current_contents )
     # get all scripts, stylesheets and images
     srcs = html_doc.css('script').map { |s| src = s.attributes['src']; src.value if src }.compact
     srcs.each do |src|
@@ -77,5 +74,6 @@ class Sitemap
 
     site_hash[:pages] << Page.new(uri, :success, page_hash)
     # TODO: process links
+    true
   end
 end
