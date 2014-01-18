@@ -32,6 +32,8 @@ describe Sitemap do
   end
   describe "#traverse_site" do
     before do
+      URI.stub(:join).with( :any_uri, '/internal' ) { 'any_uri/internal' }
+      URI.stub(:join).with( 'any_uri/internal', '/internal' ) { 'any_uri/internal' }
       subject.stub(:retrieve) { nil }
       subject.stub(:current_contents) { <<-EOS 
       <html>
@@ -63,13 +65,12 @@ describe Sitemap do
       expect( subject.site_hash.inspect ).to match(%r|local.png|)
     end
     it "should add internal links to the site hash" do
-      expect{ subject.traverse_site( :any_uri ) }.to change{ subject.site_hash[:links].size }.from(0).to(1)
+      expect{ subject.traverse_site( :any_uri ) }.to change{ subject.site_hash[:links].size }.from(0).to(2)
       expect( subject.site_hash.inspect ).to match(%r|/internal|)
       expect( subject.site_hash.inspect ).not_to match(%r|/external|)
     end
-    it "should add a page for the initial URI to the site hash" do
-      expect{ subject.traverse_site( :any_uri ) }.to change{ subject.site_hash[:pages].size }.from(0).to(1)
+    it "should add a page for each unique URI to the site hash" do
+      expect{ subject.traverse_site( :any_uri ) }.to change{ subject.site_hash[:pages].size }.from(0).to(2)
     end
-    it "should process each internal link like the root URI"
   end
 end

@@ -43,7 +43,7 @@ class Sitemap
                             scripts: [],
                             stylesheets: [] },
                   links: []
-                 }
+                }
     html_doc = Nokogiri::HTML( current_contents )
     # get all scripts, stylesheets and images
     srcs = html_doc.css('script').map { |s| src = s.attributes['src']; src.value if src }.compact
@@ -73,6 +73,7 @@ class Sitemap
         site_hash[:links][ child_uri ] ||= Link.new(child_uri, :new)
       end
     end
+    site_hash[:pages] << Page.new(uri, page_hash)
     site_hash[:links][ uri ] ||= Link.new(uri, :new)
     site_hash[:links][ uri ].status = :processed
 
@@ -81,6 +82,7 @@ class Sitemap
         traverse_site( link_obj.href )
       end
     end
+
     true
   end
 end
