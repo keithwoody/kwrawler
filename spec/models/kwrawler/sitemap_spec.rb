@@ -43,6 +43,7 @@ describe Sitemap do
         </head>
         <body>
           <a href="/internal">internal</a>
+          <a href="/internal#with_anchor">internal</a>
           <a href="http://external.com/about">external</a>
           <img src="local.png"/>
           <hr/>

@@ -39,6 +39,7 @@ class Sitemap
 
   def traverse_site( uri )
     return false if retrieve( uri ).eql?( URI_FAILURE )
+    puts "#{Time.now.to_i} traversing #{ uri }"
     page_hash = { assets: { imgs: [],
                             scripts: [],
                             stylesheets: [] },
@@ -68,7 +69,7 @@ class Sitemap
     links = html_doc.css('a').map { |l| link = l.attributes['href']; link.value if link && (link.value !~ %r{^http(s)?:.*})  }.compact
     links.each do |href|
       page_hash[:links] << href unless page_hash[:links].include?( href )
-      if uri != href
+      if uri != href && href !~ /#/  #exclude anchor links
         child_uri = URI.join(uri, href).to_s
         site_hash[:links][ child_uri ] ||= Link.new(child_uri, :new)
       end
