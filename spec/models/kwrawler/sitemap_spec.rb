@@ -10,7 +10,7 @@ describe Sitemap do
   describe "#from_uri" do
     it "should require a uri" do
       expect{ subject.from_uri }.to raise_error
-      expect{ subject.from_uri('http://www.google.com') }.not_to raise_error
+      expect{ subject.from_uri('http://127.0.0.1') }.not_to raise_error
     end
   end
   describe "#render_sitemap" do
@@ -23,8 +23,8 @@ describe Sitemap do
   end
   describe "#retrieve" do
     it "should set current_contents to the data of a URI" do
-      subject.retrieve( 'http://www.google.com' )
-      subject.current_contents.should =~ /html.*google.*/
+      subject.retrieve( 'http://www.example.com' )
+      subject.current_contents.should =~ /html.*Example.*/m
     end
     it "should return #{Sitemap::URI_FAILURE} for bad URIs" do
       subject.retrieve( 'invalid URI' ).should == Sitemap::URI_FAILURE

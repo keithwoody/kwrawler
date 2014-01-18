@@ -12,7 +12,7 @@ describe Kwrawler do
       expect( Kwrawler.crawl( 'nonono' ) ).to match(/nvalid URI/)
     end
     it "should return a Sitemap as a hash" do
-      sitemap = Kwrawler.crawl( 'http://google.com' )
+      sitemap = Kwrawler.crawl( 'http://127.0.0.1' )
       expect( sitemap ).to be_a( Hash )
       expect( sitemap.inspect ).to match(/Sitemap/)
     end
