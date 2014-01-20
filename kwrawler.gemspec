@@ -23,6 +23,8 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rspec-rails"
   spec.add_development_dependency "guard-rspec"
   spec.add_development_dependency "byebug"
+  spec.add_development_dependency "vcr"
+  spec.add_development_dependency "webmock"
 
   spec.add_runtime_dependency "nokogiri"
   spec.add_runtime_dependency "ruby-graphviz"
