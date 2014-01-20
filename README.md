@@ -31,7 +31,19 @@ And then execute:
 
 ## Usage
 
-Kwrawler.crawl( site_url )
+    require 'kwrawler'
+    Kwrawler.crawl( site_url )
+
+  or
+
+    $ irb
+    > require 'kwrawler'
+
+    > sm = Kwrawler::Sitemap.new
+    > sm.from_uri( <some domain>, format: :svg, filename: 'custom-sitemap.svg' )
+    > exit
+    $ open custom-sitemap.svg
+
 
 ## Contributing
 

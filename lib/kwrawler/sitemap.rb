@@ -50,21 +50,25 @@ class Sitemap
     site_graph[:label] = "Sitemap"
     NODE_ATTRIBUTES.each  { |attribute, value| site_graph.node[attribute] = value }
     site_graph.edge[:colorscheme] = "dark25"
+    puts "adding page nodes..."
     site_hash[:pages].each do |page|
       node_options = page.to_node
       site_graph.add_node( page.uri, node_options )
     end
+    puts "adding link edges..."
     site_hash[:pages].each_with_index do |page, idx|
-      color = ( idx % 5)+1
+      color = ( idx % 5 )+1
       page_node = site_graph.get_node( page.uri )
-      link_nodes = page.properties[:links].map { |luri| site_graph.get_node(luri) }
+      link_nodes = page.properties[:links].map { |luri| site_graph.get_node(luri) }.compact
       site_graph.add_edges( page_node, link_nodes, color: color.to_s )
     end
   end
 
-  def from_uri( uri_str )
+  def from_uri( uri_str, render_options={} )
+    uri_str += '/' if uri_str =~ /\.\w\w+$/
     if traverse_site( uri_str )
-      render_sitemap
+      format = render_options.delete(:format) || :png
+      render_sitemap( format, render_options )
     else
       URI_FAILURE + " " + uri_str
     end
@@ -75,8 +79,9 @@ class Sitemap
     build_site_graph if site_graph.nil?
     filename = options[:filename]
     filename ||= "sitemap.#{format}"
+    puts "rendering..."
     site_graph.output( format => filename )
-    site_hash
+    # site_hash
   end
 
   def retrieve( uri_str )

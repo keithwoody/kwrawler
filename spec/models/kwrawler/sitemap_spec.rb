@@ -13,7 +13,19 @@ describe Sitemap do
       expect{ subject.from_uri }.to raise_error
     end
     it "should exit gracefully for a bad URI" do
-      subject.from_uri( "http://not.valid" ).should eql( "failed to read uri http://not.valid" )
+      subject.from_uri( "http://not.valid" ).should eql( "failed to read uri http://not.valid/" )
+    end
+    it "should take an options hash to customize rendering" do
+      FileUtils.rm('example-sitemap.png') if File.exists?('example-sitemap.png')
+      VCR.use_cassette('example.com') do
+        subject.from_uri('http://example.com', filename: 'example-sitemap.png')
+      end
+      File.exists?('example-sitemap.png').should be_true
+    end
+    it "should be able to traverse joingrouper.com" do
+      VCR.use_cassette('joingrouper.com') do
+        expect{ subject.from_uri( "https://joingrouper.com", format: :svg, filename: 'jg-sitemap.svg' ) }.not_to raise_error
+      end
     end
   end
   describe "#render_sitemap" do
