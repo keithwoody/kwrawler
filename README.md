@@ -12,6 +12,10 @@ Sitemap can be exported as:
 
 ## Installation
 
+Build the gem
+
+    git clone https://github.com/keithwoody/kwrawler.git && rake build && rake install
+
 Add this line to your application's Gemfile:
 
     gem 'kwrawler'
@@ -20,9 +24,6 @@ And then execute:
 
     $ bundle
 
-Or install it yourself as:
-
-    $ gem install kwrawler
 
 ## Usage
 
