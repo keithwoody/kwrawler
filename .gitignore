@@ -16,3 +16,5 @@ spec/vcr/*.*
 test/tmp
 test/version_tmp
 tmp
+sitemap.png
+*-sitemap.*

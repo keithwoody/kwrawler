@@ -8,22 +8,46 @@ describe Sitemap do
   it { should respond_to( :traverse_site ) }
 
   describe "#from_uri" do
-    it "should require a uri" do
+    it "should require a URI" do
       expect{ subject.from_uri }.to raise_error
-      expect{ subject.from_uri('http://127.0.0.1') }.not_to raise_error
+    end
+    it "should exit gracefully for a bad URI" do
+      subject.from_uri( "http://not.valid" ).should eql( "failed to read uri http://not.valid" )
     end
   end
   describe "#render_sitemap" do
-    let(:sitemap) { subject.render_sitemap.inspect }
-    it "should output the site hash" do
-      expect( sitemap ).to match(/pages/)
-      expect( sitemap ).to match(/assets/)
-      expect( sitemap ).to match(/links/)
+    before do
+      FileUtils.rm("sitemap.png") if File.exists?( 'sitemap.png' )
+    end
+    it "should output the sitemap as a png" do
+      subject.render_sitemap
+      File.exists?( 'sitemap.png' ).should be true
+    end
+    it "should take a format argument" do
+      subject.render_sitemap( :jpg )
+      File.exists?( 'sitemap.jpg' ).should be true
+      FileUtils.rm( 'sitemap.jpg' ) if File.exists?( 'sitemap.jpg' )
+    end
+    it "should add a node for each page" do
+      VCR.use_cassette('example.com') do
+        subject.traverse_site( 'http://example.com/' )
+      end
+      subject.render_sitemap(:jpg)
+      subject.site_graph.node_count.should == 1
+    end
+    it "should add an edge for each page link" do
+      VCR.use_cassette('dnsimple.com') do
+        subject.traverse_site( 'https://dnsimple.com/' )
+      end
+      subject.render_sitemap(:jpg, filename: 'dnsimple-sitemap.jpg')
+      subject.site_graph.edge_count.should == 271
     end
   end
   describe "#retrieve" do
     it "should set current_contents to the data of a URI" do
-      subject.retrieve( 'http://www.example.com' )
+      VCR.use_cassette('example.com') do
+        subject.retrieve( 'http://example.com/' )
+      end
       subject.current_contents.should =~ /html.*Example.*/m
     end
     it "should return #{Sitemap::URI_FAILURE} for bad URIs" do
