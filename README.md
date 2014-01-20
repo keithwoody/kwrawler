@@ -14,7 +14,9 @@ Sitemap can be exported as:
 
 Build the gem
 
-    git clone https://github.com/keithwoody/kwrawler.git && rake build && rake install
+    git clone https://github.com/keithwoody/kwrawler.git
+    cd kwrawler
+    rake build && rake install
 
 Add this line to your application's Gemfile:
 
