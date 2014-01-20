@@ -42,9 +42,24 @@ class Sitemap
                              scripts: [],
                              stylesheets: [] }
                  }
-    @site_graph = GraphViz.new(:S, type: :digraph)
-    @site_graph[:label] = "Sitemap"
-    NODE_ATTRIBUTES.each  { |attribute, value| @site_graph.node[attribute] = value }
+  end
+
+  def build_site_graph
+    self.site_graph = GraphViz.new(:S, type: "strict digraph")
+    site_graph[:concentrate] = true  # combine duplicated edges
+    site_graph[:label] = "Sitemap"
+    NODE_ATTRIBUTES.each  { |attribute, value| site_graph.node[attribute] = value }
+    site_graph.edge[:colorscheme] = "dark25"
+    site_hash[:pages].each do |page|
+      node_options = page.to_node
+      site_graph.add_node( page.uri, node_options )
+    end
+    site_hash[:pages].each_with_index do |page, idx|
+      color = ( idx % 5)+1
+      page_node = site_graph.get_node( page.uri )
+      link_nodes = page.properties[:links].map { |luri| site_graph.get_node(luri) }
+      site_graph.add_edges( page_node, link_nodes, color: color.to_s )
+    end
   end
 
   def from_uri( uri_str )
@@ -57,17 +72,7 @@ class Sitemap
 
 
   def render_sitemap( format=:png, options={} )
-    site_hash[:pages].each do |page|
-      node_options = page.to_node
-      site_graph.add_nodes( page.uri, node_options )
-    end
-    site_hash[:pages].each do |page|
-      page_node = site_graph.get_node( page.uri )
-      link_nodes = page.properties[:links].map { |href| site_graph.get_node(href) }
-      link_nodes.each do |node|
-        site_graph.add_edges( page_node, node )
-      end
-    end
+    build_site_graph if site_graph.nil?
     filename = options[:filename]
     filename ||= "sitemap.#{format}"
     site_graph.output( format => filename )

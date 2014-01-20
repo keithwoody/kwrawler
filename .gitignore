@@ -17,4 +17,6 @@ test/tmp
 test/version_tmp
 tmp
 sitemap.png
+sitemap.jpg
+sitemap.dot
 *-sitemap.*
