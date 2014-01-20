@@ -25,4 +25,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "byebug"
 
   spec.add_runtime_dependency "nokogiri"
+  spec.add_runtime_dependency "ruby-graphviz"
 end
