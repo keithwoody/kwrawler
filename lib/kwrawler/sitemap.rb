@@ -17,7 +17,16 @@ class Sitemap
 
   class Page < Struct.new(:uri, :properties)
     def label_for_properties
-      "{#{uri} |{ IMGS |{foo.jpg|bar.jpg|baz.jpg} }|{ JS |{main.js|page.js} }|{ CSS |{app.css|page.css} } }"
+      "{#{uri} |{ IMGS |{#{img_labels}} }|{ JS |{#{script_labels}} }|{ CSS |{#{stylesheet_labels}} } }"
+    end
+    def img_labels
+      properties[:assets][:imgs].join('|')
+    end
+    def script_labels
+      properties[:assets][:scripts].join('|')
+    end
+    def stylesheet_labels
+      properties[:assets][:stylesheets].join('|')
     end
     def to_node
       {label: label_for_properties}
